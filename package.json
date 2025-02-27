@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/geoip-lite": "^1.4.4",
     "ahooks": "^3.8.4",
+    "axios": "^1.8.1",
     "baidu": "link:..\\domainQueryWeb\\stream\\baidu",
     "cloudflare": "^4.1.0",
+    "geoip-lite": "^1.4.10",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

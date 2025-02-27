@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Cloudflare } from "cloudflare-ts";
+import { Cloudflare } from "cloudflare";
 
 export async function POST(req: NextRequest) {
   const { apiKey, action, domains, zoneId } = await req.json();

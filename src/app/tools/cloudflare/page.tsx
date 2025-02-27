@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLocalStorageState } from "ahooks";
 export default function CloudflareTool() {
-  const [apiKey, setApiKey] = useLocalStorageState<string>("");
+  const [apiKey, setApiKey] = useState<string>("");
   const [domains, setDomains] = useState("");
   const [zones, setZones] = useState<{ id: string; name: string }[]>([]);
   const [selectedZone, setSelectedZone] = useState("");
