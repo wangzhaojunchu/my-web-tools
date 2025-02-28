@@ -8,6 +8,7 @@ let cookie: string = ""
 export async function POST(req: NextRequest) {
   const body = await req.json()
   const keywords = body.keywords
+  
   const cookies = cookie.split(";").map(item => {
     const [name, value] = item.split("=")
     return { name: name.trim(), value: value.trim() }
