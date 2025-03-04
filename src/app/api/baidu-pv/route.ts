@@ -1,24 +1,28 @@
+import MyResponse from "@/components/MyResponse"
 import axios from "axios"
+import { setConfig } from "next/config"
 import { NextRequest, NextResponse } from "next/server"
+import { CookieData, PvData } from "@/components/Types"
+// import fs from "fs"
 
 
-let cookie: string = ""
+let cookie =  ""
 
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const keywords = body.keywords
-  
+  if(!cookie) return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE"))
+  const {keyword} = await req.json()
+
   const cookies = cookie.split(";").map(item => {
     const [name, value] = item.split("=")
     return { name: name.trim(), value: value.trim() }
   })
   // console.log("allcookies:",await browser.cookies.getAll({}))
   if (cookies.length < 1) {
-    throw new Error("cookie not found")
+    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE"))
   }
   // console.log("cookies", cookies)
-  const lines = keywords
+  const lines = [keyword]
   const params: { logid: number, entry: string, bidWordSource: string, regions: number[], device: number, limit: number[], orderBy: string, order: string, campaignId: null, adgroupId: null, keywordList: { "keywordName": string, "price": null, "matchType": null, "phraseType": null }[] } = { "logid": -1, "entry": "kr_station_bidestimate_tab", "bidWordSource": "wordList", "regions": [1000, 2000, 3000, 4000, 5000, 200000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000, 28000, 29000, 30000, 31000, 32000, 33000, 34000, 35000, 36000, 300000], "device": 0, "limit": [0, 10000], "orderBy": "", "order": "desc", "campaignId": null, "adgroupId": null, "keywordList": [] }
   const lineobjs = lines.map((word: string) => {
     return { "keywordName": word, "price": null, "matchType": null, "phraseType": null }
@@ -70,12 +74,12 @@ export async function POST(req: NextRequest) {
     //   protocol:"http"
     // }
   })
-  console.log("jsonData.data.data.data",jsonData.data.data.data)
-  const result = jsonData.data.data.data.reduce((pre: any, next: any) => {
-    return { ...pre, [next.keywordName]: next.averageMonthPv }
-  }, {})
-  console.log("result",result)
-  return NextResponse.json(result)
+  const data:any[] = jsonData.data?.data?.data ?? []
+  if(data.length <= 0){
+    return NextResponse.json(MyResponse.success<PvData>({pv:-1}))
+  }
+  const [{keywordName,averageMonthPv}] = data
+  return NextResponse.json(MyResponse.success<PvData>({pv:averageMonthPv}))
 }
 
 //写一个PUT方法用于更新COOKIE
@@ -83,9 +87,10 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const body = await req.json()
   cookie = body.cookie
-  return NextResponse.json({})
+  // fs.writeFileSync(cookiePath, cookie)
+  return NextResponse.json(MyResponse.success<CookieData>({cookie}))
 }
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json({ cookie })
+  return NextResponse.json(MyResponse.success<CookieData>({cookie}))
 }

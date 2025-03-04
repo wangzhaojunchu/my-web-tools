@@ -1,29 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import dns from "node:dns/promises";
 import * as geoip from "geoip-lite";
+import MyResponse from "@/components/MyResponse";
+import { IpLocationData } from "@/components/Types";
 
 
 export async function GET(){
-    return NextResponse.json([])
+    return NextResponse.json(new MyResponse(200,"ok"))
 }
 
 export async function POST(req: NextRequest) {
   try {
     // 解析请求 body
-    const body = await req.json();
-    const domain = body.domain;
+    const {keyword} = await req.json();
 
-    if (!domain) {
-      return NextResponse.json({ error: "缺少 domain 参数" }, { status: 400 });
+    if (!keyword) {
+      return NextResponse.json(new MyResponse(403,"没有找到keyword参数"));
     }
 
     // 解析域名获取 IP 地址
     let ip;
     try {
-      const result = await dns.lookup(domain);
+      const result = await dns.lookup(keyword);
       ip = result.address;
     } catch (err:any) {
-      return NextResponse.json({ error: "域名解析失败", details: err.message }, { status: 500 });
+      return NextResponse.json(new MyResponse(403,"域名解析失败"));
     }
     console.log(ip)
     // 查询 IP 归属地（本地查询）
@@ -40,12 +41,8 @@ export async function POST(req: NextRequest) {
       : { country: "未知", region: "未知", city: "未知" };
 
     // // 返回查询结果
-    return NextResponse.json({
-      domain,
-      ip,
-      location,
-    });
-  } catch (err:any) {
-    return NextResponse.json({ error: "服务器错误", details: err.message }, { status: 500 });
+    return NextResponse.json(MyResponse.success<IpLocationData>({ip,location}))
+  } catch (ex) {
+    return NextResponse.json(MyResponse.failed((ex as Error).message));
   }
 }

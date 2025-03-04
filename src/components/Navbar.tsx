@@ -49,6 +49,7 @@ export default function Navbar() {
                 <Link href="/seotools/dropdown" className="block px-4 py-2 hover:bg-gray-100">下拉词查询</Link>
                 <Link href="/seotools/baidu-pv" className="block px-4 py-2 hover:bg-gray-100">百度流量查询</Link>
                 <Link href="/seotools/baidu-search-wap" className="block px-4 py-2 hover:bg-gray-100">百度搜索查询</Link>
+                <Link href="/seotools/baidu-word-filter" className="block px-4 py-2 hover:bg-gray-100">百度关键词筛选</Link>
               </div>
             )}
           </div>
