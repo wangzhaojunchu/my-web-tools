@@ -1,13 +1,13 @@
 import { NextRequest,NextResponse } from "next/server";
-import { BaiduResults, SearchWap } from "baidu";
+import { BaiduResults, SearchPC, SearchWap } from "baidu";
 import MyResponse from "@/components/MyResponse";
-import { SearchWapData } from "@/components/Types";
-process.env.debug = "1"
+import { SearchPCData } from "@/components/Types";
+
 export async function POST(req:NextRequest){
     const {keyword} = await req.json()
     try{
-        const brs = await new SearchWap().run(keyword,1)
-        return Response.json(MyResponse.success<SearchWapData>( brs))
+        const brs = await new SearchPC().run(keyword,1)
+        return Response.json(MyResponse.success<SearchPCData>( brs))
     }catch(ex){
         return Response.json(MyResponse.failed((ex as Error).message, 20))
     }

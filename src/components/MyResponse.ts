@@ -2,9 +2,9 @@ export default class MyResponse<T> {
     public code: number;
     public msg: string;
     public retry: number;
-    public data?: T;
+    public data: T;
 
-    constructor(code: number, msg: string, retry: number = 0, data?: T) {
+    constructor(code: number, msg: string, retry: number = 0, data: T) {
         this.code = code;
         this.msg = msg;
         this.retry = retry;

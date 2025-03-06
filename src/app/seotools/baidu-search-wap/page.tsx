@@ -5,9 +5,9 @@ import { useState } from "react";
 
 export default function BaiduPVPage() {
   const header = ["关键词", "索引", "数量", "标题","host","展示名称"]
-  const transformData = ({keyword,indexed,indexedOnFirstPage,items}:BaiduResults) => {
+  const transformData = ({indexed,indexedOnFirstPage,items}:BaiduResults) => {
     return items.map(br => {
-      return [keyword,indexed,indexedOnFirstPage,br.title,br.host,br.showName]
+      return [indexed,indexedOnFirstPage,br.title,br.host,br.showName]
     })
     
   }

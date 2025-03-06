@@ -10,7 +10,7 @@ export type CookieData = {
 
 export type SearchWapData = BaiduResults
 
-export type DropdownData = string[]
+export type DropdownData = {dropdownWords:string[]}
 
 export type IpLocationData = {
     ip?:string

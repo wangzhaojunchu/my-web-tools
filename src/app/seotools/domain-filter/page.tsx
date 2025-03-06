@@ -1,3 +1,16 @@
+/**
+ * 1. 上传数据（泛域名数量，标题集合，收录数量， 首页收录数量）到数据库
+ * 2. 读取数据库信息
+ * 3. 获取数据库中 符合条件的数据
+ * 4. 条件如下
+ * 4.1 没有泛
+ * 4.2 收录大于100，但是首页只有1-3条数据
+ * 4.3 历史快照标题包含收录标题
+ * 4.4 近3年历史同一标题
+ * 5. 一个按钮用于上传数据
+ * 6. 一个按钮用于遍历数据并且获取条件
+ */
+
 "use client"
 
 import MyResponse from "@/components/MyResponse";
@@ -8,12 +21,14 @@ import { ToastContainer, toast } from 'react-toastify';
 import GetApi from "@/components/GetApi";
 import { DropdownData, PvData, SearchWapData } from "@/components/Types";
 import Sleep from "@/components/Sleep";
-import * as Strapi from "@/components/Strapi"
 import Range from "@/components/Range";
+import { SearchPCData } from "@/components/Types";
+import * as Strapi from "@/components/Strapi";
 export default function BaiduSearchPage() {
     const [keywords, setKeywords] = useState("");
     const [results, setResults] = useState<string[][]>([]);
     const [loading, setLoading] = useState(false);
+    const [queryloading, setQueryLoading] = useState(false);
     const [pvrange,setPvrange,getPvrange] = useGetState<[number,number]>([100,1000])
     const [fanrange,setFanrange,getFanrange ] = useGetState<[number,number]>([1,5])
     const [notindexrange,setNotIndexrange,getNotIndexrange] = useGetState<[number,number]>([1,3])
@@ -42,32 +57,11 @@ export default function BaiduSearchPage() {
                 queryed.add(keyword)
                 //运行
                 try {
-                    const {data:{pv}}: MyResponse<PvData> = await GetApi<PvData>("/api/baidu-pv", { keyword })
-
-                    if(!inRange(pv, getPvrange())){
-                        toast.info(`[${keyword}]pv[${pv}]not in range [${getPvrange()}]`)
-                        continue
-                    }
-
-                    const {data:searchWapData}: MyResponse<SearchWapData> = await GetApi<SearchWapData>("/api/baidu-search-wap", { keyword })
-             
-                    const { items } = searchWapData
-                    const searchFan = items.slice(0, 10).filter(item => ![`www.${item.domain}`, `${item.domain}`].includes(item.host)).length
-                    const searchNotIndex = items.slice(0, 10).filter(item => !["/", "/index.html", "/index.php"].includes(new URL(item.siteUrl).pathname)).length
-                    
-                    if(!inRange(searchFan, getFanrange())){
-                        toast.info(`[${keyword}]fan:[${searchFan}]not in range [${getFanrange()}]`)
-                        continue
-                    }
-
-                    if(!inRange(searchNotIndex, getNotIndexrange())){
-                        toast.info(`[${keyword}]notindex:[${searchNotIndex}]not in range [${getNotIndexrange()}]`)
-                        continue
-                    }
-                    setResults(prev => [...prev, [keyword, `${pv}`, `${searchNotIndex}`,`${searchFan}`,  `${items.length}`]])
-                    
-                    await Strapi.Post("https://strapi.998zy.com/api/words",{ word: keyword, pv, result: searchWapData, count: items.length, fancount: searchFan, notindexcount: searchNotIndex })
-    
+                    const {data}: MyResponse<SearchPCData> = await GetApi<SearchPCData>("/api/baidu-pv", { keyword })
+                    const fan = data.items.filter(item => ![`www.${item.domain}`,`${item.domain}`,`wap.${item.domain}`,`m.${item.domain}`].includes(item.host)).length
+                    const body = {domain: keyword, fan, indexed: data.indexed,indexedOnIndex:data.indexedOnFirstPage}
+                    const uploadResponse = await Strapi.Post("https://strapi.998zy.com/api/words/domain-info", body)
+                    toast.info(`document [${uploadResponse}] create success`)
                 } catch (ex) {
                     toast.error((ex as Error).message)
                 }
@@ -75,7 +69,10 @@ export default function BaiduSearchPage() {
         }
         setLoading(false);
     };
-
+    const queryHandle = () => {
+        setQueryLoading(false)
+        
+    }
     return (
         <div className="container mx-auto p-4">
             <ToastContainer />
@@ -87,25 +84,29 @@ export default function BaiduSearchPage() {
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
             ></textarea>
-            <div className="flex flex-row flex-nowrap justify-between">
-                <Range label="搜索量" state={pvrange} setState={setPvrange} />
-                <Range label="泛域名数量" state={fanrange} setState={setFanrange} />
-                <Range label="不是首页的数量" state={notindexrange} setState={setNotIndexrange} />
-            </div>
+
             <button
                 className="bg-blue-500 text-white px-4 py-2 rounded"
                 onClick={handleFetchResults}
                 disabled={loading}
             >
-                {loading ? "搜索中..." : "搜索"}
+                {loading ? "上传中..." : "搜索并上传"}
+            </button>
+
+            <button
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={queryHandle}
+                disabled={queryloading}
+            >
+                {queryloading ? "查询中..." : "查询"}
             </button>
             {results && (
                 <table className="w-full mt-4 border-collapse border border-gray-200">
                     <thead>
                         <tr className="bg-gray-100">
-                            <th className="border p-2">关键词</th>
-                            <th className="border p-2">搜索量</th>
-                            <th className="border p-2">不是首页数量</th>
+                            <th className="border p-2">域名</th>
+                            <th className="border p-2">收录</th>
+                            <th className="border p-2"></th>
                             <th className="border p-2">泛域名数量</th>
                             <th className="border p-2">首页总数量</th>
                         </tr>

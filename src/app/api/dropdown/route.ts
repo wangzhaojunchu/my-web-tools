@@ -8,9 +8,9 @@ export async function POST(req: NextRequest) {
         const response = await fetch("https://m.baidu.com/sugrec?prod=wise&wd=" + encodeURIComponent(keyword))
         const jsonData = await response.json()
         const dropdownWords = jsonData.g?.map((item: any) => item.q) ?? []
-        return NextResponse.json(MyResponse.success<DropdownData>(dropdownWords))
+        return NextResponse.json(MyResponse.success<DropdownData>({dropdownWords}))
     } catch (ex) {
-        return NextResponse.json(MyResponse.success<DropdownData>([]))
+        return NextResponse.json(MyResponse.success<DropdownData>({dropdownWords:[]}))
     }
 }
 

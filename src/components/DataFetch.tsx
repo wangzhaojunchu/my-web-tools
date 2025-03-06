@@ -8,9 +8,10 @@ interface DataFetchProps {
   api: string
   headers: string[];
   transformData: (data: any) => any[];
+  onKeyword?: (keyword:string)=>string
 }
 
-export default function DataFetch({ api, headers, transformData }: DataFetchProps) {
+export default function DataFetch({ api, headers, transformData,onKeyword = (keyword:string):string => keyword }: DataFetchProps) {
   const [input, setInput] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [results, setResults] = useState<any[][]>([]);
@@ -23,20 +24,11 @@ export default function DataFetch({ api, headers, transformData }: DataFetchProp
     while (lines.length > 0) {
       const line = lines.shift()
       if (line && line.trim()) {
-        const keyword = line
-        const data = await GetApi(api, { keyword })
-        if (data.code != 200 && data.retry > 0) {
-          toast.error(data.msg)
-          if (data.retry > 0) {
-            lines.push(keyword)
-            await Sleep(data.retry * 1000)
-            continue
-          }
-          break
-        }
+        const keyword = onKeyword(line)
+        const {data} = await GetApi(api, { keyword })
 
-        const transformed = transformData(data.data);
-        setResults((prev) => [...prev, ...isMultiArray(transformed) ? transformed : [transformed]]);
+        const transformed = transformData(data);
+        setResults((prev) => [...prev, ...isMultiArray(transformed) ? transformed.map(item=>[keyword,...item]) : [[keyword,...transformed]]]);
       }
     }
     setLoading(false);

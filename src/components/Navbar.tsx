@@ -43,13 +43,14 @@ export default function Navbar() {
 
 
             {dropdownOpen == "seotools" && (
-              <div className="absolute bg-white text-black rounded shadow-md mt-2 w-40">
+              <div className="absolute bg-white text-black rounded shadow-md mt-2 w-40" onClick={ev => {setDropdownOpen(null)}}>
                 <Link href="/tools" className="block px-4 py-2 hover:bg-gray-100">所有工具</Link>
                 <Link href="/seotools/ip-location" className="block px-4 py-2 hover:bg-gray-100">域名归属地查询</Link>
                 <Link href="/seotools/dropdown" className="block px-4 py-2 hover:bg-gray-100">下拉词查询</Link>
                 <Link href="/seotools/baidu-pv" className="block px-4 py-2 hover:bg-gray-100">百度流量查询</Link>
                 <Link href="/seotools/baidu-search-wap" className="block px-4 py-2 hover:bg-gray-100">百度搜索查询</Link>
                 <Link href="/seotools/baidu-word-filter" className="block px-4 py-2 hover:bg-gray-100">百度关键词筛选</Link>
+                <Link href="/seotools/baidu-indexed" className="block px-4 py-2 hover:bg-gray-100">百度收录</Link>
               </div>
             )}
           </div>

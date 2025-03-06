@@ -6,7 +6,7 @@ import { IpLocationData } from "@/components/Types";
 
 
 export async function GET(){
-    return NextResponse.json(new MyResponse(200,"ok"))
+    return NextResponse.json(MyResponse.success({}))
 }
 
 export async function POST(req: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const {keyword} = await req.json();
 
     if (!keyword) {
-      return NextResponse.json(new MyResponse(403,"没有找到keyword参数"));
+      return NextResponse.json(MyResponse.failed("没有找到关键词参数keyword"));
     }
 
     // 解析域名获取 IP 地址
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       const result = await dns.lookup(keyword);
       ip = result.address;
     } catch (err:any) {
-      return NextResponse.json(new MyResponse(403,"域名解析失败"));
+      return NextResponse.json(MyResponse.failed("域名解析失败"));
     }
     console.log(ip)
     // 查询 IP 归属地（本地查询）

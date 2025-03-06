@@ -10,7 +10,7 @@ let cookie =  ""
 
 
 export async function POST(req: NextRequest) {
-  if(!cookie) return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE"))
+  if(!cookie) return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE",10))
   const {keyword} = await req.json()
 
   const cookies = cookie.split(";").map(item => {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   })
   // console.log("allcookies:",await browser.cookies.getAll({}))
   if (cookies.length < 1) {
-    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE"))
+    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE",10))
   }
   // console.log("cookies", cookies)
   const lines = [keyword]
@@ -75,7 +75,11 @@ export async function POST(req: NextRequest) {
     // }
   })
   const data:any[] = jsonData.data?.data?.data ?? []
+  if(jsonData.data?.redirect){
+    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE", 10))
+  }
   if(data.length <= 0){
+    console.log("jsonData.data",jsonData.data)
     return NextResponse.json(MyResponse.success<PvData>({pv:-1}))
   }
   const [{keywordName,averageMonthPv}] = data
