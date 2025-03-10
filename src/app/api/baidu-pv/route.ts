@@ -10,7 +10,7 @@ let cookie =  ""
 
 
 export async function POST(req: NextRequest) {
-  if(!cookie) return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE",10))
+  if(!cookie) return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE[cookie为空]",10))
   const {keyword} = await req.json()
 
   const cookies = cookie.split(";").map(item => {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   })
   // console.log("allcookies:",await browser.cookies.getAll({}))
   if (cookies.length < 1) {
-    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE",10))
+    return NextResponse.json(MyResponse.failed(`请联系管理员更新COOKIE[cookie格式化失效]`,10))
   }
   // console.log("cookies", cookies)
   const lines = [keyword]
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   })
   const data:any[] = jsonData.data?.data?.data ?? []
   if(jsonData.data?.redirect){
-    return NextResponse.json(MyResponse.failed("请联系管理员更新COOKIE", 10))
+    return NextResponse.json(MyResponse.failed(`请联系管理员更新COOKIE[${JSON.stringify(jsonData.data)}]`, 10))
   }
   if(data.length <= 0){
     console.log("jsonData.data",jsonData.data)

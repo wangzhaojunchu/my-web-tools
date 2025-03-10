@@ -25,7 +25,7 @@ export async function Get(api: string):Promise<any> {
     })
     if (response.ok) {
         const content = await response.json()
-        return await content?.data
+        return content
     }
 
     throw new Error(`status code is ${response.status}`)

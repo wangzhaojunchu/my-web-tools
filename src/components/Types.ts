@@ -9,6 +9,7 @@ export type CookieData = {
 }
 
 export type SearchWapData = BaiduResults
+export type SearchPCData = BaiduResults
 
 export type DropdownData = {dropdownWords:string[]}
 
@@ -26,3 +27,17 @@ export type Keyword = {
     keyword:string
 }
 
+export type Actions = "BaiduPCSearch" | "BaiduWapSearch" | "IPLocation" | "Dropdown"
+
+//用于web《=》客户端消息格式
+export type Message = {
+    id: string
+    keyword:string
+    action: Actions
+}
+
+export type ResponseMessage<T> = {
+    id: string
+    keyword:string
+    data: T
+}

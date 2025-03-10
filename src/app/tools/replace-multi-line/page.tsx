@@ -8,11 +8,11 @@ export default function ReplaceMultiLine() {
         "百度PC收录": "https://www.baidu.com/s?wd=site:{1}"
     };
 
-    const [templateText, setTemplateText] = useState("Hello, {1}!\nWelcome to our platform.");
     const [dataText, setDataText] = useState("Alice\nBob\nCharlie");
     const [outputText, setOutputText] = useState("");
     const [isRandom, setIsRandom] = useState(false); // 是否使用随机替换
-    const [selectedTemplate, setSelectedTemplate] = useState("问候模板");
+    const [selectedTemplate, setSelectedTemplate] = useState("域名解析");
+    const [templateText, setTemplateText] = useState(presetTemplates[selectedTemplate]);
 
     const handleTemplateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newTemplate = e.target.value;
