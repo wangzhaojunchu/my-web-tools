@@ -14,9 +14,9 @@ export default function BaiduSearchPage() {
     const [keywords, setKeywords] = useState("");
     const [results, setResults] = useState<string[][]>([]);
     const [loading, setLoading] = useState(false);
-    const [pvrange,setPvrange,getPvrange] = useGetState<[number,number]>([100,1000])
-    const [fanrange,setFanrange,getFanrange ] = useGetState<[number,number]>([1,5])
-    const [notindexrange,setNotIndexrange,getNotIndexrange] = useGetState<[number,number]>([1,3])
+    const [pvrange,setPvrange,getPvrange] = useGetState<[number,number]>([50,5000])
+    const [fanrange,setFanrange,getFanrange ] = useGetState<[number,number]>([0,5])
+    const [notindexrange,setNotIndexrange,getNotIndexrange] = useGetState<[number,number]>([0,3])
 
 
 
