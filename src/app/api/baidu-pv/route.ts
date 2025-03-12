@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
   })
   const data:any[] = jsonData.data?.data?.data ?? []
   if(jsonData.data?.redirect){
-    return NextResponse.json(MyResponse.failed(`请联系管理员更新COOKIE[${JSON.stringify(jsonData.data)}]`, 10))
+    return NextResponse.json(MyResponse.failed(`请联系管理员更新COOKIE[${JSON.stringify({response:jsonData.data,cookie})}]`, 10))
   }
   if(data.length <= 0){
     console.log("jsonData.data",jsonData.data)
